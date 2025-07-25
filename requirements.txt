@@ -1,0 +1,6 @@
+baidusearch==1.0.3
+fastmcp==2.10.6
+miku_ai==0.1.0
+pydantic==2.11.7
+redis==5.2.1
+uvicorn==0.35.0
