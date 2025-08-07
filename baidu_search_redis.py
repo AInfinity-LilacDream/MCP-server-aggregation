@@ -5,16 +5,6 @@ import json
 
 mcp = FastMCP("baidu search mcp")
 
-sessions = {}
-
-# 使用 decode_responses=True 自动解码
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-
-try:
-    r.ping()
-except redis.ConnectionError:
-    raise RuntimeError("无法连接到 Redis 服务器，请确保 Redis 正在运行。")
-
 @mcp.tool()
 async def baidu_search(query: str, num_results: int):
     """
@@ -26,23 +16,8 @@ async def baidu_search(query: str, num_results: int):
     **Prompt Example:** 'Find the latest research papers on AI published in 2023.'
     :return: a list of dict contains search results.
     """
-
-    value = r.get(query)
-    if value is not None:
-        return json.loads(value)
-
     results = search(query, num_results)
-    r.set(query, json.dumps(results))
-
     return results
-
-@mcp.tool()
-def cache_clear():
-    """
-    Thoroughly clear the cache. This will clear all the data stored in cache irreversibly.
-    """
-    r.flushall()
-    return "Success"
 
 if __name__ == "__main__":
     mcp.run(transport="streamable-http",
